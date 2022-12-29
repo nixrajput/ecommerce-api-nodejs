@@ -1,6 +1,6 @@
-# ecommerce-mern
+# ecommerce-api
 
-An E-commerce Web App developed using MERN stack where user can buy and checkout product with ease and add their review and rating for the products.
+An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.
 
 ## Features
 
@@ -25,14 +25,12 @@ git clone https://github.com/nixrajput/ecommerce-mern.git
 npm install
 ```
 
-- Create a new directory `config` in `backend` directory
-- Create a new file `config.env` in `config` directory
-- Add following VARIABLES in `config.env` or in production Environment Variables
+- Create a new file `config.env` in root directory and add following variables.
   
 ```env
 PORT = 4000
 
-DB_URI = 'YOUR MONGO-DB URI'
+DB_URI = 'YOUR MONGODB URI'
 DB_NAME = 'ecommerce'
 
 NODE_ENV = 'dev'
@@ -63,13 +61,7 @@ STRIPE_SECRET_KEY = 'YOUR STRIPE SECRET KEY'
 
 ```bash
 npm run dev
-cd frontend
-npm start
 ```
-
-## Website
-
-[Website Link](https://dark-puce-lemur-belt.cyclic.app)
 
 ## Connect With Me
 
