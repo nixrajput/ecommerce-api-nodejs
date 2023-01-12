@@ -1,6 +1,16 @@
-# ecommerce-api
+# ecommerce-api-nodejs
 
 An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.
+
+[![Stars](https://img.shields.io/github/stars/nixrajput/ecommerce-api-nodejs?label=Stars)][repo]
+[![Forks](https://img.shields.io/github/forks/nixrajput/ecommerce-api-nodejs?label=Forks)][repo]
+[![Watchers](https://img.shields.io/github/watchers/nixrajput/ecommerce-api-nodejs?label=Watchers)][repo]
+[![Contributors](https://img.shields.io/github/contributors/nixrajput/ecommerce-api-nodejs?label=Contributors)][repo]
+
+[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/ecommerce-api-nodejs?label=Last+Commit)][repo]
+[![GitHub issues](https://img.shields.io/github/issues/nixrajput/ecommerce-api-nodejs?label=Issues)][issues]
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/ecommerce-api-nodejs?label=Pull+Requests)][pulls]
+[![GitHub Licence](https://img.shields.io/github/license/nixrajput/ecommerce-api-nodejs?label=Licence)][license]
 
 ## Features
 
@@ -16,7 +26,7 @@ An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe
 - Clone the repository
 
 ```bash
-git clone https://github.com/nixrajput/ecommerce-mern.git
+git clone https://github.com/nixrajput/ecommerce-api-nodejs.git
 ```
 
 - Install required modules
@@ -49,9 +59,6 @@ CLOUDINARY_CLOUD_NAME = 'YOUR CLOUDINARY CLOUD NAME'
 CLOUDINARY_API_KEY = 'YOUR CLOUDINARY API KEY'
 CLOUDINARY_API_SECRET = 'YOUR CLOUDINARY API SECRET'
 
-# URL
-FRONTEND_URL = 'http://localhost:3000';
-
 # STRIPE CONFIG
 STRIPE_API_KEY = 'YOUR STRIPE API KEY'
 STRIPE_SECRET_KEY = 'YOUR STRIPE SECRET KEY'
@@ -63,24 +70,24 @@ STRIPE_SECRET_KEY = 'YOUR STRIPE SECRET KEY'
 npm run dev
 ```
 
+## Activities
+
+![Alt](https://repobeats.axiom.co/api/embed/f958e8d373d422293e33c9fb24257cfd2c8dfc24.svg "Repobeats analytics image")
+
 ## Connect With Me
 
-[<img align="left" alt="nixrajput | Website" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/globe-icon.svg" />][website]
-
-[<img align="left" alt="nixrajput | GitHub" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/github-brands.svg" />][github]
-
-[<img align="left" alt="nixrajput | Instagram" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/instagram-brands.svg" />][instagram]
-
-[<img align="left" alt="nixrajput | Facebook" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/facebook-brands.svg" />][facebook]
-
-[<img align="left" alt="nixrajput | Twitter" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/twitter-brands.svg" />][twitter]
-
-[<img align="left" alt="nixrajput | LinkedIn" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/linkedin-in-brands.svg" />][linkedin]
-
+[![Instagram: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Instagram&logoColor=fff)][instagram]
+[![Linkedin: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Linkedin&logoColor=fff)][linkedin]
+[![GitHub: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Github&logoColor=fff)][github]
+[![Twitter: nixrajput07](https://img.shields.io/badge/nixrajput07-141430?logo=Twitter&logoColor=fff)][twitter]
+[![Facebook: nixrajput07](https://img.shields.io/badge/nixrajput07-141430?logo=Facebook&logoColor=fff)][facebook]
 
 [github]: https://github.com/nixrajput
-[website]: https://nixlab.co.in
 [facebook]: https://facebook.com/nixrajput07
 [twitter]: https://twitter.com/nixrajput07
 [instagram]: https://instagram.com/nixrajput
 [linkedin]: https://linkedin.com/in/nixrajput
+[repo]: https://github.com/nixrajput/ecommerce-api-nodejs
+[issues]: https://github.com/nixrajput/ecommerce-api-nodejs/issues
+[pulls]: https://github.com/nixrajput/ecommerce-api-nodejs/pulls
+[license]: https://github.com/nixrajput/ecommerce-api-nodejs/blob/master/LICENSE.md
