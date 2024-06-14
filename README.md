@@ -1,93 +1,180 @@
-# ecommerce-api-nodejs
+# E-commerce API with Node.js, Express, and JavaScript
 
-An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.
+This repository contains the source code for a E-commerce API built using Node.js Express, and JavaScript. This README.md file provides an overview of the project and instructions on how to set it up and customize it for your own use.
 
-[![Stars](https://img.shields.io/github/stars/nixrajput/ecommerce-api-nodejs?label=Stars)][repo]
-[![Forks](https://img.shields.io/github/forks/nixrajput/ecommerce-api-nodejs?label=Forks)][repo]
-[![Watchers](https://img.shields.io/github/watchers/nixrajput/ecommerce-api-nodejs?label=Watchers)][repo]
-[![Contributors](https://img.shields.io/github/contributors/nixrajput/ecommerce-api-nodejs?label=Contributors)][repo]
+[![Stars](https://img.shields.io/github/stars/nixrajput/ecommerce-api-nodejs?label=Stars&style=flat)][repo]
+[![Forks](https://img.shields.io/github/forks/nixrajput/ecommerce-api-nodejs?label=Forks&style=flat)][repo]
+[![Watchers](https://img.shields.io/github/watchers/nixrajput/ecommerce-api-nodejs?label=Watchers&style=flat)][repo]
+[![Contributors](https://img.shields.io/github/contributors/nixrajput/ecommerce-api-nodejs?label=Contributors&style=flat)][repo]
 
-[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/ecommerce-api-nodejs?label=Last+Commit)][repo]
-[![GitHub issues](https://img.shields.io/github/issues/nixrajput/ecommerce-api-nodejs?label=Issues)][issues]
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/ecommerce-api-nodejs?label=Pull+Requests)][pulls]
-[![GitHub Licence](https://img.shields.io/github/license/nixrajput/ecommerce-api-nodejs?label=Licence)][license]
+[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/ecommerce-api-nodejs?label=Last+Commit&style=flat)][repo]
+[![GitHub issues](https://img.shields.io/github/issues/nixrajput/ecommerce-api-nodejs?label=Issues&style=flat)][issues]
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/ecommerce-api-nodejs?label=Pull+Requests&style=flat)][pulls]
+[![GitHub Licence](https://img.shields.io/github/license/nixrajput/ecommerce-api-nodejs?label=Licence&style=flat)][license]
+
+## Table of Contents
+
+- [E-commerce API with Node.js, Express, and JavaScript](#e-commerce-api-with-nodejs-express-and-javascript)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+    - [Database Setup](#database-setup)
+    - [Running the Application](#running-the-application)
+  - [Deployment](#deployment)
+  - [Technologies Used](#technologies-used)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Sponsor Me](#sponsor-me)
+  - [Connect With Me](#connect-with-me)
 
 ## Features
 
-- User Authentication
-- Add Product to Cart
-- Buy Product
-- Payment Checkout
-- Add Review
-- Add Rating
+- User authentication and authorization.
+- CRUD operations for users, jobs, and applications.
+- JWT-based authentication for secure API access.
+- RESTful API design.
+- Written in TypeScript for enhanced maintainability and type safety.
 
-## Usage
+## Getting Started
 
-- Clone the repository
+Follow these instructions to get the project up and running on your local machine.
+
+### Prerequisites
+
+You need to have the following software installed on your computer:
+
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) or [Yarn](https://yarnpkg.com/) package manager
+
+### Installation
+
+1. Star the repository.
+
+2. Clone this repository to your local machine using the following command:
+
+   ```bash
+   git clone https://github.com/nixrajput/ecommerce-api-nodejs.git
+   ```
+
+3. Navigate to the project directory:
+
+   ```bash
+   cd portfolio-nextjs
+   ```
+
+4. Install the project dependencies:
+
+   If you're using npm:
+
+   ```bash
+   npm install
+   ```
+
+   If you're using pnpm:
+
+   ```bash
+   pnpm install
+   ```
+
+   If you're using Yarn:
+
+   ```bash
+   yarn install
+   ```
+
+### Configuration
+
+Before running the application, you need to configure the environment variables. Copy the `.env.example` file to `.env.local` and fill in the necessary values.
 
 ```bash
-git clone https://github.com/nixrajput/ecommerce-api-nodejs.git
+cp .env.example .env.local
 ```
 
-- Install required modules
-  
-```bash
-npm install
-```
+### Database Setup
 
-- Create a new file `config.env` in root directory and add following variables.
-  
-```env
-PORT = 4000
+Make sure you have a database configured and running. Update the database connection details in the `.env.local` file.
 
-DB_URI = 'YOUR MONGODB URI'
-DB_NAME = 'ecommerce'
+### Running the Application
 
-NODE_ENV = 'dev'
-
-JWT_SECRET = 'YOUR JWT SECRET'
-JWT_EXPIRES_IN = 7d
-
-COOKIE_EXPIRES_IN = 5
-
-SMTP_FROM = 'Test <noreply@yourcompany.com>'
-
-SENDGRID_API_KEY = 'YOUR SENDGRID API KEY'
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME = 'YOUR CLOUDINARY CLOUD NAME'
-CLOUDINARY_API_KEY = 'YOUR CLOUDINARY API KEY'
-CLOUDINARY_API_SECRET = 'YOUR CLOUDINARY API SECRET'
-
-# STRIPE CONFIG
-STRIPE_API_KEY = 'YOUR STRIPE API KEY'
-STRIPE_SECRET_KEY = 'YOUR STRIPE SECRET KEY'
-```
-
-- Run the server
+Once the dependencies are installed and the configuration is set up, you can start the application by running:
 
 ```bash
 npm run dev
+#or
+pnpm run dev
+# or
+yarn dev
 ```
 
-## Activities
+By default, the application will run on port `3000`. You can change the port by modifying the `PORT` environment variable in the `.env.local` file.
 
-![Alt](https://repobeats.axiom.co/api/embed/f958e8d373d422293e33c9fb24257cfd2c8dfc24.svg "Repobeats analytics image")
+## Deployment
+
+This API can be deployed using various platforms such as Heroku, AWS, Google Cloud Platform, or your own server infrastructure. Here are some general steps to deploy the API:
+
+1. **Prepare your environment**: Ensure that your deployment environment meets the requirements specified in the Prerequisites section.
+
+2. **Build the application**: If necessary, build the TypeScript code into JavaScript. You can do this by running:
+
+   ```bash
+   npm run build
+   #or
+   yarn build
+   ```
+
+3. **Configure environment variables**: Set up environment variables similar to how it's done in the local setup. Ensure that you provide appropriate values for your deployment environment.
+
+4. **Deploy the application**: Deploy the built application to your chosen platform. Each platform may have its own deployment process. Refer to the documentation of your chosen platform for detailed instructions.
+
+5. **Start the application**: Once deployed, start the application in your deployment environment. This might involve running a command similar to `npm start` or `yarn start`, depending on your setup.
+
+6. **Monitor the deployment**: Monitor the deployed application for any issues. Make sure that it's running smoothly and handle any errors or performance issues as needed.
+
+## Technologies Used
+
+- Node.js
+- Express.js
+- JavaScript
+- MongoDB (or any other database of your choice)
+- Stripe
+
+## Contributing
+
+If you would like to contribute to this project, feel free to fork the repository, make your changes, and submit a pull request. Please follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Sponsor Me
+
+- By sponsoring my efforts, you're not merely contributing to the development of my projects; you're investing in its growth and sustainability.
+- Your support empowers me to dedicate more time and resources to improving the project's features, addressing issues, and ensuring its continued relevance in the rapidly evolving landscape of technology.
+- Your sponsorship directly fuels innovation, fosters a vibrant community, and helps maintain the project's high standards of quality. Together, we can shape the future of the projects and make a lasting impact in the open-source community.
+- Thank you for considering sponsoring my work!
+
+[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/nixrajput)
 
 ## Connect With Me
 
-[![Instagram: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Instagram&logoColor=fff)][instagram]
-[![Linkedin: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Linkedin&logoColor=fff)][linkedin]
-[![GitHub: nixrajput](https://img.shields.io/badge/nixrajput-141430?logo=Github&logoColor=fff)][github]
-[![Twitter: nixrajput07](https://img.shields.io/badge/nixrajput07-141430?logo=Twitter&logoColor=fff)][twitter]
-[![Facebook: nixrajput07](https://img.shields.io/badge/nixrajput07-141430?logo=Facebook&logoColor=fff)][facebook]
+[![GitHub: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=GitHub&logoColor=333&link=https://www.github.com/nixrajput)][github]
+[![Linkedin: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=LinkedIn&logoColor=blue&link=https://www.linkedin.com/in/nixrajput)][linkedin]
+[![Instagram: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=Instagram&link=https://www.instagram.com/nixrajput)][instagram]
+[![Twitter: nixrajput07](https://img.shields.io/badge/nixrajput-EFF7F6?logo=X&logoColor=333&link=https://x.com/nixrajput)][twitter]
+[![Telegram: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=Telegram&link=https://telegram.me/nixrajput)][telegram]
+[![Gmail: nkr.nikhi.nkr@gmail.com](https://img.shields.io/badge/nkr.nikhil.nkr@gmail.com-EFF7F6?logo=Gmail&link=mailto:nkr.nikhil.nkr@gmail.com)][gmail]
 
 [github]: https://github.com/nixrajput
-[facebook]: https://facebook.com/nixrajput07
 [twitter]: https://twitter.com/nixrajput07
 [instagram]: https://instagram.com/nixrajput
 [linkedin]: https://linkedin.com/in/nixrajput
+[telegram]: https://telegram.me/nixrajput
+[gmail]: mailto:nkr.nikhil.nkr@gmail.com
+
 [repo]: https://github.com/nixrajput/ecommerce-api-nodejs
-[issues]: https://github.com/nixrajput/ecommerce-api-nodejs/issues
+[issues]: https://github.com/nixrajput/ecommerce-api-nodejs
 [pulls]: https://github.com/nixrajput/ecommerce-api-nodejs/pulls
 [license]: https://github.com/nixrajput/ecommerce-api-nodejs/blob/master/LICENSE.md
