@@ -1,6 +1,6 @@
 {
   "name": "ecommerce-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.",
   "main": "./src/server.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "nodemon ./src/server.js"
   },
   "author": "Nikhil Rajput",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
     "bcrypt": "^5.1.0",
