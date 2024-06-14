@@ -5,7 +5,7 @@ const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const compression = require("compression");
+// const compression = require("compression");
 const errorMiddleware = require("./middlewares/error");
 
 exports.runApp = () => {
@@ -21,7 +21,7 @@ exports.runApp = () => {
   );
   app.use(helmet());
   app.use(morgan("combined"));
-  app.use(compression());
+  // app.use(compression());
   app.use(express.json({ limit: "100mb" }));
   app.use(express.urlencoded({ extended: true }));
   app.use(bodyParser.urlencoded({ extended: true }));
