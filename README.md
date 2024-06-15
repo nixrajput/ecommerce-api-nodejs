@@ -115,7 +115,13 @@ By default, the application will run on port `3000`. You can change the port by 
 
 ## Deployment
 
-This API can be deployed using various platforms such as Vercel, Heroku, AWS, Google Cloud Platform, or your own server infrastructure. Set up environment variables similar to how it's done in the local setup. Ensure that you provide appropriate values for your deployment environment. Deploy the built application to your chosen platform. Each platform may have its own deployment process. Refer to the documentation of your chosen platform for detailed instructions. Monitor the deployed application for any issues. Make sure that it's running smoothly and handle any errors or performance issues as needed.
+This API can be deployed using various platforms such as Vercel, Heroku, AWS, Google Cloud Platform, or your own server infrastructure.
+
+Set up environment variables similar to how it's done in the local setup. Ensure that you provide appropriate values for your deployment environment.
+
+Deploy the built application to your chosen platform. Each platform may have its own deployment process. Refer to the documentation of your chosen platform for detailed instructions.
+
+Monitor the deployed application for any issues. Make sure that it's running smoothly and handle any errors or performance issues as needed.
 
 ## Technologies Used
 
