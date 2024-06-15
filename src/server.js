@@ -8,8 +8,10 @@ const app = runApp();
 // Config
 if (process.env.NODE_ENV !== "production" || process.env.NODE_ENV !== "prod") {
   require("dotenv").config({
-    path: "./config.env",
+    path: "./.env.local",
   });
+
+  console.log("[.env]: env values loaded");
 }
 
 // Cloudinary Setup
@@ -61,7 +63,6 @@ const connectToDatabase = function () {
           }
           console.log(`[server] running on port: ${port}`);
         });
-
 
         setTimeout(() => {
           server.close();
@@ -144,9 +145,7 @@ const connectToDatabase = function () {
 
     app.listen(port, (err) => {
       if (err) {
-        console.log(
-          `[server] could not start http server on port: ${port}`
-        );
+        console.log(`[server] could not start http server on port: ${port}`);
         return;
       }
       console.log(`[server] running on port: ${port}`);
@@ -155,4 +154,3 @@ const connectToDatabase = function () {
     connectToDatabase();
   }
 })();
-

@@ -32,11 +32,12 @@ This repository contains the source code for a E-commerce API built using Node.j
 
 ## Features
 
-- User authentication and authorization.
-- CRUD operations for users, jobs, and applications.
-- JWT-based authentication for secure API access.
-- RESTful API design.
-- Written in TypeScript for enhanced maintainability and type safety.
+- **User Authentication:** Register, login, and manage user accounts with JWT-based authentication.
+- **Product Management:** CRUD operations for products.
+- **Shopping Cart:** Add, update, and remove items in the shopping cart.
+- **Order Management:** Place orders and view order history.
+- **Stripe Payment Gateway:** Integrate Stripe for secure payment processing.
+- **MongoDB Integration:** Store and manage data using MongoDB.
 
 ## Getting Started
 
@@ -48,6 +49,7 @@ You need to have the following software installed on your computer:
 
 - [Node.js](https://nodejs.org/) (LTS version recommended)
 - [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) or [Yarn](https://yarnpkg.com/) package manager
+- Stripe account and API keys
 
 ### Installation
 
@@ -62,7 +64,7 @@ You need to have the following software installed on your computer:
 3. Navigate to the project directory:
 
    ```bash
-   cd portfolio-nextjs
+   cd ecommerce-api-nodejs
    ```
 
 4. Install the project dependencies:
@@ -113,33 +115,14 @@ By default, the application will run on port `3000`. You can change the port by 
 
 ## Deployment
 
-This API can be deployed using various platforms such as Heroku, AWS, Google Cloud Platform, or your own server infrastructure. Here are some general steps to deploy the API:
-
-1. **Prepare your environment**: Ensure that your deployment environment meets the requirements specified in the Prerequisites section.
-
-2. **Build the application**: If necessary, build the TypeScript code into JavaScript. You can do this by running:
-
-   ```bash
-   npm run build
-   #or
-   yarn build
-   ```
-
-3. **Configure environment variables**: Set up environment variables similar to how it's done in the local setup. Ensure that you provide appropriate values for your deployment environment.
-
-4. **Deploy the application**: Deploy the built application to your chosen platform. Each platform may have its own deployment process. Refer to the documentation of your chosen platform for detailed instructions.
-
-5. **Start the application**: Once deployed, start the application in your deployment environment. This might involve running a command similar to `npm start` or `yarn start`, depending on your setup.
-
-6. **Monitor the deployment**: Monitor the deployed application for any issues. Make sure that it's running smoothly and handle any errors or performance issues as needed.
+This API can be deployed using various platforms such as Vercel, Heroku, AWS, Google Cloud Platform, or your own server infrastructure. Set up environment variables similar to how it's done in the local setup. Ensure that you provide appropriate values for your deployment environment. Deploy the built application to your chosen platform. Each platform may have its own deployment process. Refer to the documentation of your chosen platform for detailed instructions. Monitor the deployed application for any issues. Make sure that it's running smoothly and handle any errors or performance issues as needed.
 
 ## Technologies Used
 
 - Node.js
 - Express.js
 - JavaScript
-- MongoDB (or any other database of your choice)
-- Stripe
+- MongoDB
 
 ## Contributing
 
@@ -175,6 +158,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [gmail]: mailto:nkr.nikhil.nkr@gmail.com
 
 [repo]: https://github.com/nixrajput/ecommerce-api-nodejs
-[issues]: https://github.com/nixrajput/ecommerce-api-nodejs
+[issues]: https://github.com/nixrajput/ecommerce-api-nodejs/issues
 [pulls]: https://github.com/nixrajput/ecommerce-api-nodejs/pulls
 [license]: https://github.com/nixrajput/ecommerce-api-nodejs/blob/master/LICENSE.md
