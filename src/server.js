@@ -24,9 +24,10 @@ cloudinary.config({
 const port = process.env.PORT || 4000;
 
 // Connecting to DB
+let connected = false;
+
 const connectToDatabase = async function () {
   console.log("[database]: connecting to MongoDB...");
-  let err;
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       dbName: process.env.DB_NAME,
@@ -34,94 +35,78 @@ const connectToDatabase = async function () {
       socketTimeoutMS: 45000,
       serverSelectionTimeoutMS: 60000,
     });
-  } catch (error) {
-    err = error;
-  }
-
-  if (err) {
-    // Health Route
-    app.route("/api/v1/health").get(function (req, res) {
-      res.status(200).json({
-        success: true,
-        server: "offline",
-        message: "server is down due to database connection error",
-      });
-    });
-
-    app.use((req, res, next) => {
-      res.status(500).json({
-        success: false,
-        server: "offline",
-        message: "[server] offline due to database error",
-      });
-    });
-
+  } catch (err) {
     console.log(`[database]: could not connect due to [${err.message}]`);
-    const server = app.listen(port, (err) => {
-      if (err) {
-        console.log(
-          `[server] could not start http server on port: ${port}`
-        );
-        return;
-      }
-      console.log(`[server] running on port: ${port}`);
-    });
-
-    setTimeout(() => {
-      server.close();
-      connectToDatabase();
-    }, 10000);
+    setTimeout(connectToDatabase, 10000);
     return;
-  } else {
-    console.log(`[database]: connected successfully to MongoDB`);
-
-    // Init Modules
-    initModules(app);
-
-    // Health Route
-    app.route("/api/v1/health").get(function (req, res) {
-      res.status(200).json({
-        success: true,
-        server: "online",
-        message: "server is up and running",
-      });
-    });
-
-    // Error Handler
-    closeApp(app);
-
-    const server = app.listen(port, (err) => {
-      if (err) {
-        console.log(
-          `[server] could not start http server on port: ${port}`
-        );
-        return;
-      }
-      console.log(`[server] running on port: ${port}`);
-    });
-
-    // Handling Uncaught Exception
-    process.on("uncaughtException", (err) => {
-      console.log(`Error: ${err.message}`);
-      console.log(`[server] shutting down due to Uncaught Exception`);
-
-      server.close(() => {
-        process.exit(1);
-      });
-    });
-
-    // Unhandled Promise Rejection
-    process.on("unhandledRejection", (err) => {
-      console.log(`Error: ${err.message}`);
-      console.log(
-        `[server] shutting down due to Unhandled Promise Rejection`
-      );
-
-      server.close(() => {
-        process.exit(1);
-      });
-    });
   }
+
+  connected = true;
+  console.log(`[database]: connected successfully to MongoDB`);
+};
+
+const startServer = async function () {
+  // Health Route
+  app.route("/api/v1/health").get(function (req, res) {
+    res.status(200).json(
+      connected
+        ? { success: true, server: "online", message: "server is up and running" }
+        : {
+            success: true,
+            server: "offline",
+            message: "server is down due to database connection error",
+          }
+    );
+  });
+
+  // Registered once, ahead of the modules: Express cannot remove a route after a later connect succeeds.
+  app.use((req, res, next) => {
+    if (connected) {
+      return next();
+    }
+    res.status(500).json({
+      success: false,
+      server: "offline",
+      message: "[server] offline due to database error",
+    });
+  });
+
+  // Init Modules
+  initModules(app);
+
+  // Error Handler
+  closeApp(app);
+
+  // Listen after the first attempt, so a cold start serves its first request from the database.
+  await connectToDatabase();
+
+  const server = app.listen(port, (err) => {
+    if (err) {
+      console.log(`[server] could not start http server on port: ${port}`);
+      return;
+    }
+    console.log(`[server] running on port: ${port}`);
+  });
+
+  // Handling Uncaught Exception
+  process.on("uncaughtException", (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log(`[server] shutting down due to Uncaught Exception`);
+
+    server.close(() => {
+      process.exit(1);
+    });
+  });
+
+  // Unhandled Promise Rejection
+  process.on("unhandledRejection", (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log(`[server] shutting down due to Unhandled Promise Rejection`);
+
+    server.close(() => {
+      process.exit(1);
+    });
+  });
 };
 
 // Starting Server
@@ -152,6 +137,6 @@ const connectToDatabase = async function () {
       console.log(`[server] running on port: ${port}`);
     });
   } else {
-    connectToDatabase();
+    startServer();
   }
 })();

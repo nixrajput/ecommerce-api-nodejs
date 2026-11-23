@@ -39,7 +39,7 @@ This repository contains the source code for a E-commerce API built using Node.j
 - **Stripe Payment Gateway:** Integrate Stripe for secure payment processing.
 - **MongoDB Integration:** Store and manage data using MongoDB.
 - **Server-side Checkout Totals:** The API prices every order from the database: 18% GST, and shipping of ₹50 at ₹1000 or less (free above). The total is subtotal plus GST, the same as the web checkout shows. `POST /api/v1/payment/create` takes the cart as `orderItems` and ignores any `amount`. `POST /api/v1/order/new` ignores client prices and `paymentInfo.status`. It creates the order only after Stripe confirms that the PaymentIntent succeeded for that exact amount, and each PaymentIntent pays for one order only.
-- **Sessions:** The API does not store tokens. Changing or resetting a password makes every older token invalid. `PUT /api/v1/password/update` returns a new token.
+- **Sessions:** The API does not store tokens. Changing or resetting a password, or logging out, makes every older token of that account invalid on every device. `PUT /api/v1/password/update` returns a new token. `GET /api/v1/logout` needs the token in the `Authorization` header. A token issued in the same second as a logout is also rejected, because JWT times count whole seconds.
 - **Rate Limiting:** Each client IP gets 10 requests per 15 minutes on the register, login and password routes, and 300 per 15 minutes on all routes. The limiter counts in memory per process. On Vercel, each serverless instance counts on its own.
 
 ## Getting Started

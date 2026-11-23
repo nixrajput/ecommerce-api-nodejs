@@ -1,6 +1,7 @@
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { once } = require("node:events");
+const { setTimeout: sleep } = require("node:timers/promises");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -443,4 +444,58 @@ test("production 5xx responses hide details, 4xx keep them", (t) => {
   } finally {
     process.env.NODE_ENV = nodeEnv;
   }
+});
+
+test("each order gets its own createdAt, not the server start time", async () => {
+  await sleep(5);
+  const before = Date.now();
+  assert.ok(new Order().createdAt.getTime() >= before);
+});
+
+test("updateOrder waits for every stock update and reports its errors", async (t) => {
+  const items = [{ product: id(), quantity: 2 }, { product: id(), quantity: 1 }];
+  const stock = new Map(items.map((item) => [`${item.product}`, 5]));
+  t.mock.method(Order, "findById", async () => ({
+    orderStatus: "Processing",
+    orderItems: items,
+    save: async () => {},
+  }));
+  const findProduct = t.mock.method(Product, "findById", async (productId) => ({
+    stock: stock.get(`${productId}`),
+    async save() {
+      await sleep(5);
+      stock.set(`${productId}`, this.stock);
+    },
+  }));
+  const req = { params: { id: `${id()}` }, body: { status: "Shipped" } };
+
+  assert.equal((await call(orders.updateOrder, req)).body.success, true);
+  assert.deepEqual([...stock.values()], [3, 4]);
+
+  findProduct.mock.mockImplementation(async () => ({
+    stock: 5,
+    save: async () => {
+      throw new Error("stock write failed");
+    },
+  }));
+  assert.equal((await call(orders.updateOrder, req)).err?.message, "stock write failed");
+});
+
+test("logout rejects every token issued before it", async (t) => {
+  const { isAuthenticatedUser } = require("../src/middlewares/auth");
+  const user = { _id: id(), name: "Test User" };
+  t.mock.method(User, "findById", async () => user);
+  t.mock.method(User, "updateOne", async (filter, change) => Object.assign(user, change));
+  const sign = (iat) => jwt.sign({ id: `${user._id}`, iat }, process.env.JWT_SECRET);
+  const token = sign(Math.floor(Date.now() / 1000));
+  const headers = { authorization: `Bearer ${token}` };
+
+  assert.equal((await request("/user/me", { headers })).status, 200);
+  assert.equal((await request("/logout", { headers })).status, 200);
+  assert.equal((await request("/user/me", { headers })).status, 401);
+
+  // A login after the logout second still works.
+  const later = sign(Math.floor(Date.now() / 1000) + 1);
+  const { err } = await call(isAuthenticatedUser, { headers: { authorization: `Bearer ${later}` } });
+  assert.equal(err, undefined);
 });
