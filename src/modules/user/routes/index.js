@@ -17,15 +17,18 @@ const {
   isAuthenticatedUser,
   authorizeRoles,
 } = require("../../../middlewares/auth");
+const { authLimiter } = require("../../../middlewares/rateLimit");
 
 const router = express.Router();
 
 // Routes
-router.route("/register").post(registerUser);
-router.route("/login").post(loginUser);
-router.route("/password/forgot").post(forgotPassword);
-router.route("/password/reset/:token").put(resetPassword);
-router.route("/password/update").put(isAuthenticatedUser, updatePassword);
+router.route("/register").post(authLimiter, registerUser);
+router.route("/login").post(authLimiter, loginUser);
+router.route("/password/forgot").post(authLimiter, forgotPassword);
+router.route("/password/reset/:token").put(authLimiter, resetPassword);
+router
+  .route("/password/update")
+  .put(authLimiter, isAuthenticatedUser, updatePassword);
 router.route("/logout").get(logoutUser);
 router.route("/user/me").get(isAuthenticatedUser, getProfileDetails);
 router.route("/user/me/update").put(isAuthenticatedUser, updateUserProfile);

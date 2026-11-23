@@ -1,12 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const compression = require("compresion");
+const compression = require("compression");
 const errorMiddleware = require("./middlewares/error");
+const { generalLimiter } = require("./middlewares/rateLimit");
 
 exports.runApp = () => {
   const app = express();
@@ -20,15 +20,20 @@ exports.runApp = () => {
     })
   );
   app.use(helmet());
+  app.use(generalLimiter);
   app.use(morgan("combined"));
   app.use(compression());
   app.use(express.json({ limit: "100mb" }));
   app.use(express.urlencoded({ extended: true }));
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(fileUpload());
-  app.set("trust proxy", true);
+  // Express 5 leaves req.body undefined when no parser ran; handlers destructure it.
+  app.use((req, res, next) => {
+    req.body ??= {};
+    next();
+  });
+  // One proxy hop (Vercel). `true` would let clients spoof req.ip via X-Forwarded-For.
+  app.set("trust proxy", 1);
 
   return app;
 };
@@ -36,7 +41,7 @@ exports.runApp = () => {
 exports.closeApp = (app) => {
   // Middleware for Errors
   app.use(errorMiddleware);
-  app.use("*", (req, res, next) => {
+  app.use((req, res, next) => {
     res.status(404).json({
       success: false,
       server: "online",

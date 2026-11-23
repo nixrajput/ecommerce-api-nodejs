@@ -10,6 +10,16 @@ module.exports = (err, req, res, next) => {
     err = new ErrorHandler(message, 400);
   }
 
+  // Mongoose schema validation failed on client input
+  if (err.name === "ValidationError") {
+    err = new ErrorHandler(err.message, 400);
+  }
+
+  // Stripe auth, permission and API errors describe our Stripe account, not the client's request.
+  if (err.type?.startsWith("Stripe") && err.type !== "StripeInvalidRequestError") {
+    err.statusCode = 502;
+  }
+
   // Mongoose duplicate key error
   if (err.code === 11000) {
     const message = `Email is already in use, please try again with another email.`;
@@ -17,7 +27,7 @@ module.exports = (err, req, res, next) => {
   }
 
   // Wrong JWT error
-  if (err.name === "jsonWebTokenError") {
+  if (err.name === "JsonWebTokenError") {
     const message = `Token is invalid, please login again.`;
     err = new ErrorHandler(message, 400);
   }
@@ -28,8 +38,17 @@ module.exports = (err, req, res, next) => {
     err = new ErrorHandler(message, 400);
   }
 
+  const isServerError = err.statusCode >= 500;
+
+  if (isServerError) {
+    console.error(err);
+  }
+
   res.status(err.statusCode).json({
     success: false,
-    message: err.message,
+    message:
+      isServerError && process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : err.message,
   });
 };
