@@ -20,7 +20,9 @@ exports.isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
 
     req.user = await User.findById(userData.id);
 
-    if (!req.user) {
+    const changedAt = req.user?.passwordChangedAt?.getTime();
+
+    if (!req.user || (changedAt && userData.iat < Math.floor(changedAt / 1000))) {
       return next(new ErrorHandler("Please login to account.", 401));
     }
 

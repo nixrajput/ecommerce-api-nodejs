@@ -33,9 +33,7 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
   });
 
   const token = user.generateToken();
-  await user.save();
-  const decodedData = jwt.decode(token);
-  const expiresAt = decodedData.exp;
+  const expiresAt = jwt.decode(token).exp;
 
   const message = `Hello ${user.name},
     \nWe're glad you're here! Check out our product collection and enjoy shopping.
@@ -84,22 +82,8 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Invalid email or password.", 401));
   }
 
-  let token = user.token;
-  let expiresAt = user.expiresAt;
-
-  if (token) {
-    if (expiresAt < new Date().getTime() / 1000) {
-      token = user.generateToken();
-      await user.save();
-      const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-      expiresAt = decodedData.exp;
-    }
-  } else {
-    token = user.generateToken();
-    await user.save();
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    expiresAt = decodedData.exp;
-  }
+  const token = user.generateToken();
+  const expiresAt = jwt.decode(token).exp;
 
   res.status(200).json({
     success: true,
@@ -131,10 +115,12 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
     );
   }
 
+  // Same answer whether or not the account exists, so the route cannot list accounts.
+  const sentMessage = "If an account uses this email, a reset link is on its way.";
   const user = await User.findOne({ email: email });
 
   if (!user) {
-    return next(new ErrorHandler("User not found.", 404));
+    return res.status(200).json({ success: true, message: sentMessage });
   }
 
   // Get ResetPasswordToken
@@ -160,7 +146,7 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: `Email sent to ${user.email} successfully.`,
+      message: sentMessage,
     });
   } catch (err) {
     user.resetPasswordToken = undefined;
@@ -259,12 +245,16 @@ exports.updatePassword = catchAsyncError(async (req, res, next) => {
 
   user.password = newPassword;
 
-  user.generateToken();
   await user.save();
+
+  // Saving a new password invalidates every older token, including the one on this request.
+  const token = user.generateToken();
 
   res.status(200).json({
     success: true,
     message: "Password changed successfully.",
+    token: token,
+    expiresAt: jwt.decode(token).exp,
   });
 });
 

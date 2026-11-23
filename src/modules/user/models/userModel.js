@@ -64,8 +64,7 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 
-  token: String,
-  expiresAt: String,
+  passwordChangedAt: Date,
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
@@ -76,10 +75,18 @@ userSchema.pre("save", async function () {
   }
 
   this.password = await bcrypt.hash(this.password, 12);
+
+  // The auth middleware rejects tokens issued before this time.
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date();
+  }
 });
 
 userSchema.set("toJSON", {
   transform: (doc, ret) => {
+    // token and expiresAt are no longer in the schema, but older documents may still hold them.
+    delete ret.token;
+    delete ret.expiresAt;
     delete ret.password;
     delete ret.resetPasswordToken;
     delete ret.resetPasswordExpire;
@@ -89,15 +96,9 @@ userSchema.set("toJSON", {
 
 // JWT Token
 userSchema.methods.generateToken = function () {
-  const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-
-  const decodedData = jwt.decode(token);
-  this.token = token;
-  this.expiresAt = decodedData.exp;
-
-  return token;
 };
 
 // Compare Password
