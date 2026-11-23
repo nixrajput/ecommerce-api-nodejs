@@ -1,6 +1,6 @@
 {
   "name": "ecommerce-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.",
   "main": "./src/server.js",
   "scripts": {
@@ -42,5 +42,6 @@
       "minimatch@>=7.0.0 <11.0.1": "11.0.1",
       "picomatch@<2.3.2": "2.3.2"
     }
-  }
+  },
+  "packageManager": "pnpm@9.15.9"
 }
