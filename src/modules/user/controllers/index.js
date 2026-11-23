@@ -96,6 +96,11 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
 // Logout User
 exports.logoutUser = catchAsyncError(async (req, res, next) => {
+  // JWT iat counts whole seconds, so start at the next second to also reject a token issued this second.
+  const tokensValidAfter = new Date((Math.floor(Date.now() / 1000) + 1) * 1000);
+
+  await User.updateOne({ _id: req.user._id }, { tokensValidAfter });
+
   res.status(200).json({
     success: true,
     message: "User logged out sucessfully.",
