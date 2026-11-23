@@ -29,7 +29,7 @@ router.route("/password/reset/:token").put(authLimiter, resetPassword);
 router
   .route("/password/update")
   .put(authLimiter, isAuthenticatedUser, updatePassword);
-router.route("/logout").get(logoutUser);
+router.route("/logout").get(isAuthenticatedUser, logoutUser);
 router.route("/user/me").get(isAuthenticatedUser, getProfileDetails);
 router.route("/user/me/update").put(isAuthenticatedUser, updateUserProfile);
 router
