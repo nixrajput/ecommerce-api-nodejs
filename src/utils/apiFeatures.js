@@ -1,3 +1,10 @@
+const mongoose = require("mongoose");
+
+const RANGE_FIELDS = ["price", "ratings"];
+const RANGE_OPERATORS = ["gt", "gte", "lt", "lte"];
+
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 class ApiFeatures {
   constructor(query, queryStr) {
     this.query = query;
@@ -5,37 +12,46 @@ class ApiFeatures {
   }
 
   search() {
-    const keyword = this.queryStr.keyword
-      ? {
-          name: {
-            $regex: this.queryStr.keyword,
-            $options: "i",
-          },
-        }
-      : {};
+    const { keyword } = this.queryStr;
+    const filter =
+      typeof keyword === "string" && keyword
+        ? {
+            name: mongoose.trusted({
+              $regex: escapeRegex(keyword),
+              $options: "i",
+            }),
+          }
+        : {};
 
-    this.query = this.query.find({ ...keyword });
+    this.query = this.query.find(filter);
     return this;
   }
 
+  // Express 5's default query parser keeps bracket keys flat: "price[gte]", not { price: { gte } }.
   filter() {
-    const tempQuery = { ...this.queryStr };
+    const filter = {};
 
-    // Remove fields for Category
-    const removedFields = ["keyword", "page", "limit"];
+    if (typeof this.queryStr.category === "string") {
+      filter.category = this.queryStr.category;
+    }
 
-    removedFields.forEach((key) => delete tempQuery[key]);
+    for (const field of RANGE_FIELDS) {
+      const range = {};
 
-    // Filter for Price and Rating
-    let queryStr = JSON.stringify(tempQuery);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+      for (const op of RANGE_OPERATORS) {
+        const value = this.queryStr[`${field}[${op}]`];
+        if (typeof value === "string") range[`$${op}`] = value;
+      }
 
-    this.query = this.query.find(JSON.parse(queryStr));
+      if (Object.keys(range).length) filter[field] = mongoose.trusted(range);
+    }
+
+    this.query = this.query.find(filter);
     return this;
   }
 
   pagination(resultPerPage) {
-    const currentPage = Number(this.queryStr.page) || 1;
+    const currentPage = Math.max(1, Number.parseInt(this.queryStr.page, 10) || 1);
 
     const skip = resultPerPage * (currentPage - 1);
 

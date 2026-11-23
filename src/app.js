@@ -1,11 +1,10 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const compression = require("compresion");
+const compression = require("compression");
 const errorMiddleware = require("./middlewares/error");
 
 exports.runApp = () => {
@@ -24,10 +23,13 @@ exports.runApp = () => {
   app.use(compression());
   app.use(express.json({ limit: "100mb" }));
   app.use(express.urlencoded({ extended: true }));
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(fileUpload());
+  // Express 5 leaves req.body undefined when no parser ran; handlers destructure it.
+  app.use((req, res, next) => {
+    req.body ??= {};
+    next();
+  });
   app.set("trust proxy", true);
 
   return app;
@@ -36,7 +38,7 @@ exports.runApp = () => {
 exports.closeApp = (app) => {
   // Middleware for Errors
   app.use(errorMiddleware);
-  app.use("*", (req, res, next) => {
+  app.use((req, res, next) => {
     res.status(404).json({
       success: false,
       server: "online",

@@ -1,39 +1,46 @@
 {
   "name": "ecommerce-api",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.",
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
     "dev": "nodemon ./src/server.js",
-    "push":"git add -A && git commit -m \"Update Changes & Bug Fixes\" && git push origin master"
+    "test": "node --test",
+    "push": "git add -A && git commit -m \"Update Changes & Bug Fixes\" && git push origin master"
   },
   "author": "Nikhil Rajput",
   "license": "MIT",
   "dependencies": {
-    "@sendgrid/mail": "^7.7.0",
-    "bcrypt": "^5.1.0",
-    "body-parser": "^1.20.1",
-    "cloudinary": "^1.33.0",
-    "compresion": "^1.7.11",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "express-fileupload": "^1.4.0",
-    "helmet": "^6.0.1",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.8.2",
-    "morgan": "^1.10.0",
-    "stripe": "^11.5.0",
-    "validator": "^13.7.0"
+    "@sendgrid/mail": "8.1.6",
+    "bcrypt": "6.0.0",
+    "cloudinary": "2.11.0",
+    "compression": "1.8.2",
+    "cookie-parser": "1.4.7",
+    "cors": "2.8.6",
+    "dotenv": "18.0.10",
+    "express": "5.3.0",
+    "express-fileupload": "1.6.0",
+    "express-rate-limit": "8.7.5",
+    "helmet": "8.3.0",
+    "jsonwebtoken": "9.0.3",
+    "mongoose": "9.12.3",
+    "morgan": "1.12.1",
+    "stripe": "23.2.0",
+    "validator": "13.15.35"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "nodemon": "3.1.14"
   },
   "engines": {
-    "node": ">=17.x",
+    "node": ">=20.19.0",
     "pnpm": ">=7.x",
     "npm": ">=8.x"
+  },
+  "pnpm": {
+    "overrides": {
+      "minimatch@>=7.0.0 <11.0.1": "11.0.1",
+      "picomatch@<2.3.2": "2.3.2"
+    }
   }
 }
