@@ -5,20 +5,24 @@ const sendEmail = require("../../../utils/sendEmail");
 const crypto = require("crypto");
 const cloudinary = require("cloudinary");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+
+// Rejects missing values and non-strings, such as {"$gt": ""} sent as JSON.
+const isText = (value) => typeof value === "string" && value.length > 0;
 
 // Register a User
 exports.registerUser = catchAsyncError(async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  if (!name) {
+  if (!isText(name)) {
     return next(new ErrorHandler("Please enter a name.", 400));
   }
 
-  if (!email) {
+  if (!isText(email)) {
     return next(new ErrorHandler("Please enter an email address.", 400));
   }
 
-  if (!password) {
+  if (!isText(password)) {
     return next(new ErrorHandler("Please enter a password.", 400));
   }
 
@@ -62,7 +66,7 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
 
   // Email and Password validation
-  if (!email || !password) {
+  if (!isText(email) || !isText(password)) {
     return next(
       new ErrorHandler("Please enter email and password to login.", 401)
     );
@@ -118,7 +122,7 @@ exports.logoutUser = catchAsyncError(async (req, res, next) => {
 exports.forgotPassword = catchAsyncError(async (req, res, next) => {
   const { email } = req.body;
 
-  if (!email) {
+  if (!isText(email)) {
     return next(
       new ErrorHandler(
         "Please enter your email associated with the account.",
@@ -138,13 +142,9 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 
   await user.save();
 
-  let resetPasswordUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/auth/password/reset/${resetToken}`;
-
-  if (process.env.NODE_ENV !== "PRODUCTION") {
-    resetPasswordUrl = `http://localhost:3000/auth/password/reset/${resetToken}`;
-  }
+  // Never build this link from the Host header: a forged Host sends the token to another site.
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const resetPasswordUrl = `${frontendUrl}/auth/password/reset/${resetToken}`;
 
   const message = `Hello ${user.name},
     \nYour password reset link is :- \n\n ${resetPasswordUrl}.
@@ -176,11 +176,11 @@ exports.forgotPassword = catchAsyncError(async (req, res, next) => {
 exports.resetPassword = catchAsyncError(async (req, res, next) => {
   const { newPassword, confirmPassword } = req.body;
 
-  if (!newPassword) {
+  if (!isText(newPassword)) {
     return next(new ErrorHandler("Please enter new password.", 400));
   }
 
-  if (!confirmPassword) {
+  if (!isText(confirmPassword)) {
     return next(new ErrorHandler("Please enter new password again.", 400));
   }
 
@@ -192,14 +192,14 @@ exports.resetPassword = catchAsyncError(async (req, res, next) => {
 
   const user = await User.findOne({
     resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() },
+    resetPasswordExpire: mongoose.trusted({ $gt: Date.now() }),
   });
 
   if (!user) {
     return next(new ErrorHandler("Token is invalid or expired.", 400));
   }
 
-  if (newP4 !== confirmPassword) {
+  if (newPassword !== confirmPassword) {
     return next(new ErrorHandler("Passwords do not matched.", 400));
   }
 
@@ -233,15 +233,15 @@ exports.getProfileDetails = catchAsyncError(async (req, res, next) => {
 exports.updatePassword = catchAsyncError(async (req, res, next) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
 
-  if (!oldPassword) {
+  if (!isText(oldPassword)) {
     return next(new ErrorHandler("Please enter old password.", 400));
   }
 
-  if (!newPassword) {
+  if (!isText(newPassword)) {
     return next(new ErrorHandler("Please enter new password.", 400));
   }
 
-  if (!confirmPassword) {
+  if (!isText(confirmPassword)) {
     return next(new ErrorHandler("Please enter new password again.", 400));
   }
 

@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const compression = require("compression");
 const errorMiddleware = require("./middlewares/error");
+const { generalLimiter } = require("./middlewares/rateLimit");
 
 exports.runApp = () => {
   const app = express();
@@ -19,6 +20,7 @@ exports.runApp = () => {
     })
   );
   app.use(helmet());
+  app.use(generalLimiter);
   app.use(morgan("combined"));
   app.use(compression());
   app.use(express.json({ limit: "100mb" }));
@@ -30,7 +32,8 @@ exports.runApp = () => {
     req.body ??= {};
     next();
   });
-  app.set("trust proxy", true);
+  // One proxy hop (Vercel). `true` would let clients spoof req.ip via X-Forwarded-For.
+  app.set("trust proxy", 1);
 
   return app;
 };

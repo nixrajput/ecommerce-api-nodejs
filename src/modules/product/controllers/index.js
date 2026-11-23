@@ -3,16 +3,46 @@ const ErrorHandler = require("../../../utils/errorHandler");
 const catchAsyncError = require("../../../middlewares/catchAsyncError");
 const ApiFeatures = require("../../../utils/apiFeatures");
 const cloudinary = require("cloudinary");
+const mongoose = require("mongoose");
+
+const MAX_IMAGES = 10;
+const PRODUCT_FIELDS = ["name", "description", "price", "category", "stock"];
+
+// Admins send one image as a string or several as an array. Anything else
+// (e.g. {"length": 1e9}) would drive the upload loops below.
+const readImages = (value) => {
+  const images = typeof value === "string" ? [value] : value;
+
+  if (
+    !Array.isArray(images) ||
+    images.length > MAX_IMAGES ||
+    !images.every((image) => typeof image === "string")
+  ) {
+    throw new ErrorHandler(`Send up to ${MAX_IMAGES} images.`, 400);
+  }
+
+  return images;
+};
+
+const pickProductFields = (body) =>
+  Object.fromEntries(
+    PRODUCT_FIELDS.filter((key) => body[key] !== undefined).map((key) => [
+      key,
+      body[key],
+    ])
+  );
+
+const requireId = (value, label) => {
+  if (!mongoose.isObjectIdOrHexString(value)) {
+    throw new ErrorHandler(`Invalid ${label} id.`, 400);
+  }
+
+  return value;
+};
 
 // Create Product -- Admin
 exports.createProduct = catchAsyncError(async (req, res, next) => {
-  let images = [];
-
-  if (typeof req.body.images === "string") {
-    images.push(req.body.images);
-  } else {
-    images = req.body.images;
-  }
+  const images = readImages(req.body.images);
 
   const imagesLink = [];
 
@@ -27,10 +57,11 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  req.body.images = imagesLink;
-  req.body.user = req.user.id;
-
-  const product = await Product.create(req.body);
+  const product = await Product.create({
+    ...pickProductFields(req.body),
+    images: imagesLink,
+    user: req.user.id,
+  });
 
   res.status(201).json({
     success: true,
@@ -98,15 +129,11 @@ exports.updateProduct = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Product not found.", 404));
   }
 
-  let images = [];
+  const update = pickProductFields(req.body);
 
-  if (typeof req.body.images === "string") {
-    images.push(req.body.images);
-  } else {
-    images = req.body.images;
-  }
+  if (req.body.images !== undefined) {
+    const images = readImages(req.body.images);
 
-  if (images !== undefined) {
     for (let i = 0; i < product.images.length; i++) {
       await cloudinary.v2.uploader.destroy(product.images[i].public_id);
     }
@@ -124,10 +151,10 @@ exports.updateProduct = catchAsyncError(async (req, res, next) => {
       });
     }
 
-    req.body.images = imagesLink;
+    update.images = imagesLink;
   }
 
-  product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+  product = await Product.findByIdAndUpdate(req.params.id, update, {
     returnDocument: "after",
     runValidators: true,
   });
@@ -160,16 +187,21 @@ exports.deleteProduct = catchAsyncError(async (req, res, next) => {
 
 // Create or Update Review
 exports.createProductReview = catchAsyncError(async (req, res, next) => {
-  const { rating, comment, productId } = req.body;
+  const { comment, productId } = req.body;
+  const rating = Number(req.body.rating);
+
+  if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
+    return next(new ErrorHandler("Rating must be a number from 0 to 5.", 400));
+  }
 
   const review = {
     user: req.user._id,
     name: req.user.name,
-    rating: Number(rating),
+    rating: rating,
     comment: comment,
   };
 
-  const product = await Product.findById(productId);
+  const product = await Product.findById(requireId(productId, "product"));
 
   if (!product) {
     return next(new ErrorHandler("Product not found.", 404));
@@ -207,7 +239,7 @@ exports.createProductReview = catchAsyncError(async (req, res, next) => {
 
 // Get All Reviews of a Product
 exports.getProductReviews = catchAsyncError(async (req, res, next) => {
-  const product = await Product.findById(req.query.id);
+  const product = await Product.findById(requireId(req.query.id, "product"));
 
   if (!product) {
     return next(new ErrorHandler("Product not found.", 404));
@@ -222,14 +254,30 @@ exports.getProductReviews = catchAsyncError(async (req, res, next) => {
 
 // Delete Review
 exports.deleteReview = catchAsyncError(async (req, res, next) => {
-  const product = await Product.findById(req.query.productId);
+  const productId = requireId(req.query.productId, "product");
+  const reviewId = requireId(req.query.id, "review");
+
+  const product = await Product.findById(productId);
 
   if (!product) {
     return next(new ErrorHandler("Product not found.", 404));
   }
 
+  const review = product.reviews.find((doc) => doc._id.toString() === reviewId);
+
+  if (!review) {
+    return next(new ErrorHandler("Review not found.", 404));
+  }
+
+  if (
+    review.user.toString() !== req.user._id.toString() &&
+    req.user.role !== "admin"
+  ) {
+    return next(new ErrorHandler("You can only delete your own review.", 403));
+  }
+
   const reviews = product.reviews.filter(
-    (doc) => doc._id.toString() !== req.query.id.toString()
+    (doc) => doc._id.toString() !== reviewId
   );
 
   let total = 0;
@@ -249,7 +297,7 @@ exports.deleteReview = catchAsyncError(async (req, res, next) => {
   const numOfReviews = reviews.length;
 
   await Product.findByIdAndUpdate(
-    req.query.productId,
+    productId,
     {
       reviews,
       ratings,

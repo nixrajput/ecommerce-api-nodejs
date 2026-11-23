@@ -41,7 +41,12 @@ exports.getCustomOrder = catchAsyncError(async (req, res, next) => {
     "name email"
   );
 
-  if (!order) {
+  // 404, not 403, so other users cannot probe which order ids exist.
+  if (
+    !order ||
+    (order.user?._id.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin")
+  ) {
     return next(new ErrorHandler("Order not found.", 404));
   }
 

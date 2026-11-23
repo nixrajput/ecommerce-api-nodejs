@@ -75,7 +75,16 @@ userSchema.pre("save", async function () {
     return;
   }
 
-  this.password = await bcrypt.hash(this.password, 16);
+  this.password = await bcrypt.hash(this.password, 12);
+});
+
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpire;
+    return ret;
+  },
 });
 
 // JWT Token

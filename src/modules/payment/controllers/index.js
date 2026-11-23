@@ -1,10 +1,11 @@
 const catchAsyncError = require("../../../middlewares/catchAsyncError");
-const stripe = require("stripe")(
-  "sk_test_51JCiUfSDU2GWp7bizlzSkQUVwQItdQGSBP5zg1kbdnZBB8VS5XDZ5kCVgXcW4lbbWjGvLK99vi3kmjR9AZLC7nBF00YaiymMQH"
-);
+const Stripe = require("stripe");
 
 // Process Payment
 exports.createPayment = catchAsyncError(async (req, res, next) => {
+  // Built per request: Stripe throws without a key, and dotenv loads after this module.
+  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
   const myPayment = await stripe.paymentIntents.create({
     amount: req.body.amount,
     currency: "inr",
