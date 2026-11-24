@@ -50,7 +50,7 @@ Follow these instructions to get the project up and running on your local machin
 
 You need to have the following software installed on your computer:
 
-- [Node.js](https://nodejs.org/) 20.19 or newer (LTS version recommended)
+- [Node.js](https://nodejs.org/) 26
 - [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/) or [Yarn](https://yarnpkg.com/) package manager
 - Stripe account and API keys
 

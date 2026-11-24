@@ -1,0 +1,8 @@
+# pnpm 12 ignores the "pnpm" field in package.json, so its settings live here.
+overrides:
+  minimatch@>=7.0.0 <11.0.1: 11.0.1
+  picomatch@<2.3.2: 2.3.2
+
+# pnpm 9 ran every install script. bcrypt is the only dependency with one.
+allowBuilds:
+  bcrypt: true

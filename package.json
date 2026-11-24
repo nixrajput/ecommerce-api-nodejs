@@ -1,6 +1,6 @@
 {
   "name": "ecommerce-api",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "An open source ecommerce api built with Node.js, Express.js, MongoDB, and Stripe.",
   "main": "./src/server.js",
   "scripts": {
@@ -33,15 +33,9 @@
     "nodemon": "3.1.14"
   },
   "engines": {
-    "node": ">=20.19.0",
+    "node": "26.x",
     "pnpm": ">=7.x",
     "npm": ">=8.x"
   },
-  "pnpm": {
-    "overrides": {
-      "minimatch@>=7.0.0 <11.0.1": "11.0.1",
-      "picomatch@<2.3.2": "2.3.2"
-    }
-  },
-  "packageManager": "pnpm@9.15.9"
+  "packageManager": "pnpm@12.23.0"
 }
